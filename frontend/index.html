@@ -1,0 +1,486 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/qa-dashboard/">
+    <title>QA Dashboard | ForteBank</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <img src="assets/logo.png" alt="Forte" class="forte-logo-img">
+                    <span>QA Dashboard</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-page="dashboard" onclick="navigateTo('dashboard')">
+                    <i class="fas fa-home"></i>
+                    <span>Главная</span>
+                </a>
+                <a href="#" class="nav-item" data-page="tasks" onclick="navigateTo('tasks')">
+                    <i class="fas fa-tasks"></i>
+                    <span>Задачи Jira</span>
+                </a>
+                <a href="#" class="nav-item" data-page="merge-requests" onclick="navigateTo('merge-requests')">
+                    <i class="fas fa-code-branch"></i>
+                    <span>Git Активности</span>
+                </a>
+                <a href="#" class="nav-item" data-page="confluence" onclick="navigateTo('confluence')">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Документация</span>
+                </a>
+                <a href="#" class="nav-item" data-page="attendance" onclick="navigateTo('attendance')">
+                    <i class="fas fa-clock"></i>
+                    <span>Посещаемость</span>
+                </a>
+ <a href="#" class="nav-item" data-page="candidates" onclick="navigateTo('candidates')">
+                    <i class="fas fa-user-tie"></i>
+                    <span>Собеседования</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="sidebar-author">
+                    <span class="author-glow">Created by Berkenov Timur</span>
+                    <span class="author-tooltip">Да-да, это всё сделал он. Гений, миллиардер, плейбой, филантроп.</span>
+                </div>
+                <button class="theme-toggle" onclick="toggleTheme()" title="Переключить тему">
+                    <span id="themeIcon">🌙</span>
+                </button>
+                <div class="status-indicator" id="connectionStatus">
+                    <span class="status-dot"></span>
+                    <span>Live</span>
+                </div>
+                <div class="last-updated">
+                    <i class="fas fa-sync-alt"></i>
+                    <span id="lastUpdated">-</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Page: Dashboard -->
+            <div class="page" id="page-dashboard">
+                <div class="page-header">
+                    <h1>Обзор команды</h1>
+                    <span class="page-subtitle">Тестировщики | ForteBank</span>
+                </div>
+
+                <div class="filters-bar">
+                    <select class="filter-select" id="dashboardMonthFilter"></select>
+                </div>
+
+                <!-- Gauges -->
+                <section id="gaugesSection"></section>
+
+                <!-- Summary Cards -->
+                <section class="summary-section">
+                    <div class="summary-card">
+                        <div class="summary-icon blue"><i class="fas fa-tasks"></i></div>
+                        <div class="summary-content">
+                            <span class="summary-value" id="totalActive">-</span>
+                            <span class="summary-label">Активные задачи</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon green"><i class="fas fa-check-circle"></i></div>
+                        <div class="summary-content">
+                            <span class="summary-value" id="totalCompleted">-</span>
+                            <span class="summary-label">Выполнено</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon orange"><i class="fas fa-code-branch"></i></div>
+                        <div class="summary-content">
+                            <span class="summary-value" id="totalMRs">-</span>
+                            <span class="summary-label">Merge Requests</span>
+                        </div>
+                    </div>
+                    <div class="summary-card" id="alertsSummaryCard">
+                        <div class="summary-icon red"><i class="fas fa-exclamation-triangle"></i></div>
+                        <div class="summary-content">
+                            <span class="summary-value" id="totalAlerts">-</span>
+                            <span class="summary-label">Алерты</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Dashboard Conclusion -->
+                <div class="conclusion-banner" id="dashboardConclusion" style="display:none;"></div>
+
+                <!-- Alerts -->
+                <section class="alerts-section" id="alertsSection" style="display:none;">
+                    <div class="alerts-header">
+                        <h3><i class="fas fa-bell"></i> Активные алерты</h3>
+                        <div class="alerts-header-actions">
+                            <button class="btn-export" onclick="exportAlertsToExcel()" title="Экспорт в Excel">
+                                <i class="fas fa-file-excel"></i> Excel
+                            </button>
+                            <button class="btn-collapse" onclick="toggleAlerts()">
+                                <i class="fas fa-chevron-down" id="alertsToggleIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="alerts-list" id="alertsList"></div>
+                </section>
+
+                <!-- Employee Cards -->
+                <section class="employees-section">
+                    <h2 class="section-title">Сотрудники</h2>
+                    <div class="employees-grid" id="employeesGrid">
+                        <div class="loading-state">
+                            <div class="spinner"></div>
+                            <p>Загрузка данных...</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Page: Tasks -->
+            <div class="page hidden" id="page-tasks">
+                <div class="page-header">
+                    <h1>Задачи Jira</h1>
+                    <span class="page-subtitle">Детали по задачам сотрудников</span>
+                </div>
+                <div class="conclusion-banner" id="tasksConclusion" style="display:none;"></div>
+                <div class="filters-bar">
+                    <select class="filter-select" id="tasksMonthFilter"></select>
+                    <select class="filter-select" id="tasksFilterEmployee" onchange="filterTasks()">
+                        <option value="all">Все сотрудники</option>
+                    </select>
+                    <select class="filter-select" id="tasksFilterStatus" onchange="filterTasks()">
+                        <option value="all">Все статусы</option>
+                    </select>
+                    <select class="filter-select" id="tasksFilterType" onchange="filterTasks()">
+                        <option value="all">Все типы</option>
+                    </select>
+                    <div class="search-wrapper">
+                        <i class="fas fa-search"></i>
+                        <input type="text" class="search-input" id="tasksSearch" placeholder="Поиск..." oninput="filterTasks()">
+                    </div>
+                    <button class="btn-export" onclick="showTasksExportDialog()">
+                        <i class="fas fa-file-excel"></i> Excel
+                    </button>
+                </div>
+                <div class="tasks-table-container">
+                    <table class="data-table" id="tasksTable">
+                        <thead>
+                            <tr>
+                                <th>Ключ</th>
+                                <th>Сотрудник</th>
+                                <th>Задача</th>
+                                <th>Тип</th>
+                                <th>Статус</th>
+                                <th>Дата создания</th>
+                                <th>Дата обновления</th>
+                                <th>Дней в статусе</th>
+                                <th>Замечания</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tasksTableBody">
+                            <tr><td colspan="10" class="loading-cell"><div class="spinner"></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Page: Merge Requests / Git Activities -->
+            <div class="page hidden" id="page-merge-requests">
+                <div class="page-header">
+                    <h1>Git Активности</h1>
+                    <span class="page-subtitle">GitLab активность команды автоматизации</span>
+                </div>
+
+                <!-- Sub-tabs -->
+                <div class="sub-tabs">
+                    <button class="sub-tab active" id="subtab-mr" onclick="switchGitTab('mr')">
+                        <i class="fas fa-code-branch"></i> Merge Requests
+                    </button>
+                    <button class="sub-tab" id="subtab-pushes" onclick="switchGitTab('pushes')">
+                        <i class="fas fa-upload"></i> Git Push история
+                    </button>
+                </div>
+
+                <!-- Sub-page: Merge Requests -->
+                <div id="git-tab-mr">
+                    <div class="conclusion-banner" id="mrConclusion" style="display:none;"></div>
+                    <div class="filters-bar">
+                        <select class="filter-select" id="mrMonthFilter"></select>
+                        <select class="filter-select" id="mrFilterEmployee" onchange="filterMRs()">
+                            <option value="all">Все сотрудники</option>
+                        </select>
+                        <select class="filter-select" id="mrFilterState" onchange="filterMRs()">
+                            <option value="all">Все статусы</option>
+                            <option value="opened">Открытые</option>
+                            <option value="merged">Merged</option>
+                            <option value="closed">Закрытые</option>
+                        </select>
+                        <select class="filter-select" id="mrFilterPipeline" onchange="filterMRs()">
+                            <option value="all">Pipeline: все</option>
+                            <option value="success">Успешный</option>
+                            <option value="failed">Упавший</option>
+                            <option value="running">В процессе</option>
+                        </select>
+                        <div class="search-wrapper">
+                            <i class="fas fa-search"></i>
+                            <input type="text" class="search-input" id="mrSearch" placeholder="Поиск..." oninput="filterMRs()">
+                        </div>
+                    </div>
+                    <div class="tasks-table-container">
+                        <table class="data-table" id="mrTable">
+                            <thead>
+                                <tr>
+                                    <th>MR</th>
+                                    <th>Сотрудник</th>
+                                    <th>Название</th>
+                                    <th>Проект</th>
+                                    <th>Статус</th>
+                                    <th>Pipeline</th>
+                                    <th style="cursor:pointer" onclick="sortMRByDate()">Дата <span id="mrSortDate" class="sort-icon">↓</span></th>
+                                    <th>Дней</th>
+                                    <th>Ревьюеры</th>
+                                </tr>
+                            </thead>
+                            <tbody id="mrTableBody">
+                                <tr><td colspan="9" class="loading-cell"><div class="spinner"></div></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Sub-page: Git Push History -->
+                <div id="git-tab-pushes" style="display:none;">
+                    <div class="filters-bar">
+                        <select class="filter-select" id="pushMonthFilter" onchange="loadPushHistory()"></select>
+                        <select class="filter-select" id="pushFilterEmployee" onchange="filterPushes()">
+                            <option value="all">Все сотрудники</option>
+                        </select>
+                        <div class="search-wrapper">
+                            <i class="fas fa-search"></i>
+                            <input type="text" class="search-input" id="pushSearch" placeholder="Поиск по репозиторию..." oninput="filterPushes()">
+                        </div>
+                    </div>
+                    <div class="tasks-table-container">
+                        <table class="data-table" id="pushTable">
+                            <thead>
+                                <tr>
+                                    <th>Сотрудник</th>
+                                    <th>Репозиторий</th>
+                                    <th>Коммит</th>
+                                    <th style="cursor:pointer" onclick="sortPushByDate()">Дата <span id="pushSortDate" class="sort-icon">↓</span></th>
+                                    <th>Команда</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pushTableBody">
+                                <tr><td colspan="5" class="loading-cell"><div class="spinner"></div></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page: Confluence -->
+            <div class="page hidden" id="page-confluence">
+                <div class="page-header">
+                    <h1>Документация Confluence</h1>
+                    <span class="page-subtitle">Активность и качество документации</span>
+                </div>
+                <div class="conclusion-banner" id="confConclusion" style="display:none;"></div>
+                <div class="filters-bar">
+                    <select class="filter-select" id="confMonthFilter"></select>
+                    <select class="filter-select" id="confFilterEmployee" onchange="filterConfluence()">
+                        <option value="all">Все сотрудники</option>
+                    </select>
+                    <select class="filter-select" id="confFilterSpace" onchange="filterConfluence()">
+                        <option value="all">Все пространства</option>
+                    </select>
+                    <div class="search-wrapper">
+                        <i class="fas fa-search"></i>
+                        <input type="text" class="search-input" id="confSearch" placeholder="Поиск..." oninput="filterConfluence()">
+                    </div>
+                </div>
+                <div class="tasks-table-container">
+                    <table class="data-table" id="confTable">
+                        <thead>
+                            <tr>
+                                <th>Страница</th>
+                                <th>Сотрудник</th>
+                                <th>Пространство</th>
+                                <th>Версия</th>
+                                <th>Обновлено</th>
+                                <th>Изменения</th>
+                            </tr>
+                        </thead>
+                        <tbody id="confTableBody">
+                            <tr><td colspan="6" class="loading-cell"><div class="spinner"></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Page: Attendance (VPN) -->
+            <div class="page hidden" id="page-attendance">
+                <div class="page-header">
+                    <h1>Посещаемость</h1>
+                    <span class="page-subtitle">VPN-подключения · Норма: 8:30–20:00</span>
+                </div>
+                <div class="filters-bar">
+                    <select class="filter-select" id="vpnPeriodFilter" onchange="renderVPN()">
+                        <option value="all">Все периоды</option>
+                        <option value="current">Текущий месяц</option>
+                    </select>
+                    <select class="filter-select" id="vpnUserFilter" onchange="renderVPN()">
+                        <option value="">Все сотрудники</option>
+                    </select>
+                    <div class="search-wrapper">
+                        <i class="fas fa-search"></i>
+                        <input type="text" class="search-input" id="vpnSearch" placeholder="Поиск..." oninput="renderVPN()">
+                    </div>
+                    <button class="btn-export" onclick="openVPNUpload()">
+                        <i class="fas fa-plus"></i> Загрузить xlsx
+                    </button>
+                </div>
+                <div class="summary-section" id="vpnStats" style="grid-template-columns:repeat(6,1fr)"></div>
+                <div class="tasks-table-container">
+                    <table class="data-table" id="vpnTable">
+                        <thead>
+                            <tr>
+                                <th style="cursor:pointer" onclick="sortVPN('name')">Сотрудник <span id="vpnSort-name" class="sort-icon">↕</span></th>
+                                <th style="cursor:pointer" onclick="sortVPN('date')">Дата <span id="vpnSort-date" class="sort-icon">↓</span></th>
+                                <th>Раб. время</th>
+                                <th>Часов</th>
+                                <th>Вне раб.</th>
+                                <th>Часов</th>
+                                <th style="cursor:pointer" onclick="sortVPN('total')">Итого <span id="vpnSort-total" class="sort-icon">↕</span></th>
+                                <th>Примечание</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vpnTableBody">
+                            <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-secondary)">Загрузите xlsx файл для отображения данных</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- VPN Upload Modal -->
+            <div class="candidate-form-overlay" id="vpnUploadOverlay" style="display:none;">
+                <div class="candidate-form">
+                    <h3><i class="fas fa-file-upload"></i> Загрузка VPN выгрузки</h3>
+                    <div style="border:2px dashed var(--border);border-radius:var(--radius-sm);padding:24px;text-align:center;cursor:pointer" id="vpnDropZone">
+                        <label for="vpnFileInput" style="cursor:pointer;color:var(--accent-magenta);font-weight:600">Нажмите или перетащите .xlsx файл</label>
+                        <input type="file" id="vpnFileInput" accept=".xlsx,.xls" style="display:none">
+                        <p style="color:var(--text-muted);font-size:12px;margin-top:6px">FortiGate или Splunk формат</p>
+                    </div>
+                    <div id="vpnUploadMsg" style="text-align:center;margin-top:12px;font-size:13px"></div>
+                    <div class="form-actions">
+                        <button class="btn-cancel" onclick="closeVPNUpload()">Закрыть</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page: Candidates -->
+            <div class="page hidden" id="page-candidates">
+                <div class="page-header">
+                    <h1>Собеседования</h1>
+                    <span class="page-subtitle">Подбор кандидатов — Тестировщики</span>
+                </div>
+                <div class="filters-bar">
+                    <select class="filter-select" id="candidatesMonthFilter"></select>
+                    <select class="filter-select" id="candidatesResultFilter" onchange="filterCandidates()">
+                        <option value="all">Все результаты</option>
+                        <option value="accepted">Принят</option>
+                        <option value="rejected">Отклонён</option>
+                        <option value="accepted_no_sb">Не прошёл СБ</option>
+                        <option value="pending">В ожидании</option>
+                    </select>
+                    <div class="btn-group-toggle" id="candidatesTypeFilter">
+                        <button class="btn-toggle active" data-type="all" onclick="filterCandidatesByType('all')">Все</button>
+                        <button class="btn-toggle" data-type="manual" onclick="filterCandidatesByType('manual')">Manual</button>
+                        <button class="btn-toggle" data-type="automation" onclick="filterCandidatesByType('automation')">Automation</button>
+                    </div>
+                    <div class="search-wrapper">
+                        <i class="fas fa-search"></i>
+                        <input type="text" class="search-input" id="candidatesSearch" placeholder="Поиск..." oninput="filterCandidates()">
+                    </div>
+                    <button class="btn-export" onclick="showAddCandidateForm()">
+                        <i class="fas fa-plus"></i> Добавить
+                    </button>
+                    <button class="btn-export" onclick="exportCandidatesToExcel()">
+                        <i class="fas fa-file-excel"></i> Excel
+                    </button>
+                </div>
+
+                <!-- Stats -->
+                <div class="summary-section" style="grid-template-columns:repeat(5,1fr)" id="candidatesStats"></div>
+
+                <!-- Conclusion -->
+                <div class="conclusion-banner" id="candidatesConclusion" style="display:none;"></div>
+
+                <!-- Table -->
+                <div class="tasks-table-container">
+                    <table class="data-table" id="candidatesTable">
+                        <thead>
+                            <tr>
+                                <th>Кандидат</th>
+                                <th>Тип</th>
+                                <th>Дата</th>
+                                <th>Балл</th>
+                                <th>Уровень</th>
+                                <th>Результат</th>
+                                <th>Заключение</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="candidatesTableBody">
+                            <tr><td colspan="8" class="loading-cell"><div class="spinner"></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Add Form (hidden by default) -->
+                <div class="candidate-form-overlay" id="candidateFormOverlay" style="display:none;">
+                    <div class="candidate-form">
+                        <div class="form-header-row">
+                            <h3><i class="fas fa-user-plus"></i> Новый кандидат</h3>
+                            <div class="btn-group-toggle" id="cf_type_toggle">
+                                <button class="btn-toggle active" data-type="automation" onclick="switchCandidateType('automation')">Automation</button>
+                                <button class="btn-toggle" data-type="manual" onclick="switchCandidateType('manual')">Manual</button>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <input type="text" id="cf_name" placeholder="ФИО кандидата" class="form-input">
+                            <input type="date" id="cf_date" class="form-input">
+                        </div>
+                        <div class="form-competencies" id="cf_competencies"></div>
+                        <div class="form-row">
+                            <select id="cf_result" class="form-input">
+                                <option value="rejected">Отклонён</option>
+                                <option value="accepted">Принят</option>
+                                <option value="accepted_no_sb">Не прошёл СБ</option>
+                                <option value="pending">В ожидании</option>
+                            </select>
+                        </div>
+                        <div class="form-row">
+                            <textarea id="cf_conclusion" placeholder="Заключение" class="form-input" rows="2"></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button class="btn-save" onclick="submitCandidate()"><i class="fas fa-check"></i> Сохранить</button>
+                            <button class="btn-cancel" onclick="hideAddCandidateForm()">Отмена</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+ </main>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

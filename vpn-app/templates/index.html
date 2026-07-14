@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VPN — Рабочие часы</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg-primary: #0f1117;
+    --bg-secondary: #1a1d27;
+    --bg-card: #21242f;
+    --bg-hover: #282c3a;
+    --text-primary: #e4e6eb;
+    --text-secondary: #8b8fa3;
+    --text-muted: #5c6070;
+    --accent-magenta: #E31C79;
+    --accent-blue: #4c8dff;
+    --accent-green: #34d399;
+    --accent-orange: #fb923c;
+    --accent-red: #f87171;
+    --accent-purple: #a78bfa;
+    --border: #2d3040;
+    --radius: 12px;
+    --radius-sm: 8px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg-primary);color:var(--text-primary);min-height:100vh;line-height:1.5;padding:28px 32px;
+background:radial-gradient(ellipse at 80% 20%,rgba(227,28,121,.06) 0%,transparent 50%),radial-gradient(ellipse at 20% 80%,rgba(227,28,121,.04) 0%,transparent 50%),var(--bg-primary)}
+h1{font-size:24px;font-weight:700;margin-bottom:4px;background:linear-gradient(135deg,var(--text-primary),var(--accent-magenta));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.subtitle{color:var(--text-secondary);font-size:13px;margin-bottom:24px}
+
+/* Toolbar */
+.toolbar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.toolbar-group{display:flex;gap:8px;align-items:center}
+.toolbar select,.toolbar input{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;color:var(--text-primary);font-size:13px;font-family:inherit}
+.toolbar select{min-width:150px;cursor:pointer}
+.toolbar select:focus,.toolbar input:focus{outline:none;border-color:var(--accent-magenta)}
+.toolbar input{min-width:180px}
+.toolbar input::placeholder{color:var(--text-muted)}
+.btn-add{display:flex;align-items:center;gap:6px;padding:9px 16px;background:var(--accent-magenta);border:none;border-radius:var(--radius-sm);color:white;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .15s}
+.btn-add:hover{opacity:.85}
+.btn-files{display:flex;align-items:center;gap:6px;padding:9px 14px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-secondary);font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn-files:hover{border-color:var(--accent-blue);color:var(--accent-blue)}
+.btn-clear{padding:9px 14px;background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);color:var(--accent-red);border-radius:var(--radius-sm);cursor:pointer;font-size:12px;font-weight:500;transition:all .15s;font-family:inherit}
+.btn-clear:hover{background:var(--accent-red);color:white}
+
+/* Upload Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(3px)}
+.modal-overlay.active{display:flex}
+.modal{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;width:480px;max-width:90vw}
+.modal h3{font-size:16px;margin-bottom:16px;color:var(--accent-blue)}
+.modal .upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:32px;text-align:center;transition:all .2s;cursor:pointer}
+.modal .upload-zone.dragover{border-color:var(--accent-magenta);background:rgba(227,28,121,.05)}
+.modal .upload-zone label{cursor:pointer;color:var(--accent-magenta);font-weight:600;font-size:14px}
+.modal .upload-zone p{color:var(--text-muted);font-size:12px;margin-top:6px}
+.modal .upload-zone input{display:none}
+.modal-close{padding:9px 20px;background:none;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-secondary);font-size:13px;cursor:pointer;font-family:inherit;margin-top:14px}
+.modal-close:hover{border-color:var(--text-secondary)}
+.upload-msg{text-align:center;margin-top:12px;font-size:13px;font-weight:500}
+
+/* Files Panel */
+.files-panel{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:20px;display:none}
+.files-panel.active{display:block}
+.files-panel h4{font-size:13px;color:var(--text-secondary);margin-bottom:10px}
+.file-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--bg-secondary);border-radius:var(--radius-sm);margin-bottom:5px;font-size:12px}
+.file-item .file-name{font-weight:600;color:var(--text-primary)}
+.file-item .file-meta{color:var(--text-muted);margin:0 10px;flex:1}
+.btn-delete{background:rgba(248,113,113,.1);color:var(--accent-red);border:1px solid rgba(248,113,113,.3);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:11px;font-weight:600;transition:all .15s}
+.btn-delete:hover{background:var(--accent-red);color:white}
+
+/* Summary Cards */
+.summary-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:24px}
+.stat{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;transition:all .2s}
+.stat:hover{border-color:var(--accent-magenta);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.stat .num{font-size:22px;font-weight:700;color:var(--accent-blue);line-height:1.2}
+.stat .lbl{font-size:11px;color:var(--text-secondary);margin-top:3px}
+
+/* Table */
+.table-container{border-radius:var(--radius);border:1px solid var(--border);overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead{background:var(--bg-secondary)}
+th{padding:11px 14px;text-align:left;font-weight:600;color:var(--text-secondary);font-size:11px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
+td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+tbody tr:hover{background:var(--bg-hover)}
+tbody tr:last-child td{border-bottom:none}
+.cell-normal{color:var(--accent-green);font-weight:600}
+.cell-after{background:rgba(248,113,113,.1);color:var(--accent-red);font-weight:600;border-radius:4px;padding:2px 8px}
+.tag{padding:3px 8px;border-radius:5px;font-size:10px;font-weight:600;display:inline-block}
+.tag-absent{background:rgba(251,146,60,.12);color:var(--accent-orange)}
+.tag-weekend{background:rgba(52,211,153,.12);color:var(--accent-green)}
+.tag-holiday{background:rgba(167,139,250,.12);color:var(--accent-purple)}
+tr.row-absent{background:rgba(251,146,60,.04)}
+tr.row-weekend{background:rgba(52,211,153,.04)}
+.empty-state{text-align:center;padding:60px;color:var(--text-muted);font-size:14px}
+</style>
+</head>
+<body>
+<h1>📊 VPN — Рабочие часы</h1>
+<p class="subtitle">Норма: 8:30–20:00 · Работа в выходные считается как внерабочее время</p>
+
+<!-- Toolbar -->
+<div class="toolbar">
+    <div class="toolbar-group">
+        <select id="periodFilter" onchange="render()">
+            <option value="all">Все периоды</option>
+            <option value="current">Текущий месяц</option>
+            <option value="half">Последние 6 мес</option>
+        </select>
+        <select id="userFilter" onchange="render()"><option value="">Все сотрудники</option></select>
+        <input type="text" id="searchInput" placeholder="🔍 Поиск по имени..." oninput="render()">
+    </div>
+    <div class="toolbar-group" style="margin-left:auto">
+        <button class="btn-add" onclick="openUpload()">＋ Добавить</button>
+        <button class="btn-files" onclick="toggleFilesPanel()">📂 Файлы <span id="filesCount"></span></button>
+        <button class="btn-clear" onclick="clearData()">🗑 Очистить</button>
+    </div>
+</div>
+
+<!-- Files Panel -->
+<div class="files-panel" id="filesPanel">
+    <h4>Загруженные файлы</h4>
+    <div id="filesList"></div>
+</div>
+
+<!-- Upload Modal -->
+<div class="modal-overlay" id="uploadModal">
+    <div class="modal">
+        <h3>📁 Загрузка выгрузки VPN</h3>
+        <div class="upload-zone" id="dropZone">
+            <label for="fileInput">Нажмите или перетащите .xlsx файл</label>
+            <input type="file" id="fileInput" accept=".xlsx,.xls">
+            <p>FortiGate или Splunk формат</p>
+        </div>
+        <div class="upload-msg" id="uploadMsg"></div>
+        <button class="modal-close" onclick="closeUpload()">Закрыть</button>
+    </div>
+</div>
+
+<div class="summary-row" id="stats"></div>
+<div class="empty-state" id="emptyState">Загрузите файл для отображения данных</div>
+<div class="table-container" style="display:none" id="mainTable">
+<table>
+<thead><tr><th>Сотрудник</th><th>Дата</th><th>Период (раб.)</th><th>Часов (раб.)</th><th>Период (вне раб.)</th><th>Часов (вне раб.)</th><th>Примечание</th></tr></thead>
+<tbody id="tbody"></tbody>
+</table>
+</div>
+
+<script>
+let allData = [];
+const WS=510, WE=1200;
+
+// Generate month options dynamically
+(function(){
+    const sel=document.getElementById('periodFilter');
+    const now=new Date();
+    for(let i=0;i<12;i++){
+        const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+        const val=d.toISOString().slice(0,7);
+        const label=d.toLocaleDateString('ru',{month:'long',year:'numeric'});
+        const o=document.createElement('option');o.value=val;o.textContent=label;
+        sel.appendChild(o);
+    }
+})();
+
+fetchData(); fetchFiles();
+
+// Upload modal
+function openUpload(){document.getElementById('uploadModal').classList.add('active')}
+function closeUpload(){document.getElementById('uploadModal').classList.remove('active')}
+
+const dropZone=document.getElementById('dropZone');
+const fileInput=document.getElementById('fileInput');
+dropZone.addEventListener('dragover',e=>{e.preventDefault();dropZone.classList.add('dragover')});
+dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop',e=>{e.preventDefault();dropZone.classList.remove('dragover');if(e.dataTransfer.files.length)uploadFile(e.dataTransfer.files[0])});
+fileInput.addEventListener('change',()=>{if(fileInput.files.length)uploadFile(fileInput.files[0])});
+document.getElementById('uploadModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeUpload()});
+
+async function uploadFile(file){
+    const msg=document.getElementById('uploadMsg');
+    msg.textContent='Загрузка...';msg.style.color='var(--accent-blue)';
+    const fd=new FormData();fd.append('file',file);
+    try{
+        const res=await fetch('/api/upload',{method:'POST',body:fd});
+        const data=await res.json();
+        if(data.success){msg.style.color='var(--accent-green)';msg.textContent='✅ '+data.message;fetchData();fetchFiles()}
+        else{msg.style.color='var(--accent-red)';msg.textContent='❌ '+data.error}
+    }catch(e){msg.style.color='var(--accent-red)';msg.textContent='❌ Ошибка сети'}
+}
+
+// Files panel
+function toggleFilesPanel(){document.getElementById('filesPanel').classList.toggle('active')}
+
+async function fetchFiles(){
+    try{
+        const res=await fetch('/api/files');const files=await res.json();
+        document.getElementById('filesCount').textContent=files.length?`(${files.length})`:'';
+        const el=document.getElementById('filesList');
+        if(!files.length){el.innerHTML='<div style="color:var(--text-muted);font-size:12px">Нет загруженных файлов</div>';return}
+        el.innerHTML=files.map(f=>`<div class="file-item"><span class="file-name">📄 ${f.filename}</span><span class="file-meta">${f.records} записей · ${f.uploaded_at}</span><button class="btn-delete" onclick="deleteFile('${encodeURIComponent(f.id)}','${f.filename}')">✕ Удалить</button></div>`).join('');
+    }catch(e){console.error(e)}
+}
+
+async function deleteFile(id,fn){
+    if(!confirm(`Удалить "${fn}"?`))return;
+    const res=await fetch('/api/files/'+id,{method:'DELETE'});
+    const d=await res.json();
+    if(d.success){fetchData();fetchFiles()}
+}
+
+async function clearData(){
+    if(!confirm('Очистить все данные?'))return;
+    await fetch('/api/clear',{method:'POST'});
+    allData=[];populateFilter();render();fetchFiles();
+}
+
+async function fetchData(){
+    try{const res=await fetch('/api/data');allData=await res.json();populateFilter();render()}catch(e){console.error(e)}
+}
+
+function populateFilter(){
+    const sel=document.getElementById('userFilter');const cur=sel.value;
+    const users=[...new Set(allData.map(r=>r.name))].sort();
+    sel.innerHTML='<option value="">Все сотрудники</option>';
+    users.forEach(u=>{const o=document.createElement('option');o.value=u;o.textContent=u;sel.appendChild(o)});
+    sel.value=cur;
+}
+
+function toMin(t){const[h,m]=t.split(':').map(Number);return h*60+m}
+function toTime(m){m=((m%1440)+1440)%1440;return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0')}
+function diffH(s,e){let d=e-s;if(d<0)d+=1440;return Math.round(d/6)/10}
+
+function render(){
+    const userF=document.getElementById('userFilter').value;
+    const periodF=document.getElementById('periodFilter').value;
+    const searchF=document.getElementById('searchInput').value.toLowerCase().trim();
+
+    let filtered=allData;
+
+    // Period filter
+    if(periodF==='current'){
+        const now=new Date();const ym=now.toISOString().slice(0,7);
+        filtered=filtered.filter(r=>r.date.startsWith(ym));
+    }else if(periodF==='half'){
+        const d=new Date();d.setMonth(d.getMonth()-6);const cutoff=d.toISOString().slice(0,10);
+        filtered=filtered.filter(r=>r.date>=cutoff);
+    }else if(periodF!=='all'){
+        filtered=filtered.filter(r=>r.date.startsWith(periodF));
+    }
+
+    // User filter
+    if(userF) filtered=filtered.filter(r=>r.name===userF);
+
+    // Search
+    if(searchF) filtered=filtered.filter(r=>r.name.toLowerCase().includes(searchF));
+
+    if(!filtered.length){document.getElementById('emptyState').style.display='block';document.getElementById('mainTable').style.display='none';document.getElementById('stats').innerHTML='';return}
+    document.getElementById('emptyState').style.display='none';document.getElementById('mainTable').style.display='';
+
+    const rows=filtered.map(r=>{
+        if(r.flag==='absent'||r.flag==='weekend_off'||r.flag==='holiday_off')return{...r,workP:'—',workH:0,afterP:'—',afterH:0};
+        const sM=toMin(r.start),eRaw=toMin(r.end);let eM=eRaw;if(eM<=sM)eM+=1440;
+        let workP='—',workH=0,afterP='—',afterH=0;const ap=[];
+        if(r.flag==='weekend_work'||r.flag==='holiday_work'){
+            afterP=toTime(sM)+'–'+toTime(eM);afterH=diffH(sM,eM);return{...r,workP,workH,afterP,afterH};
+        }
+        if(sM<WS){const se=Math.min(eM,WS);if(se>sM){ap.push(toTime(sM)+'–'+toTime(se));afterH+=diffH(sM,se)}}
+        const ws=Math.max(sM,WS),we=Math.min(eM,WE);if(we>ws){workP=toTime(ws)+'–'+toTime(we);workH=diffH(ws,we)}
+        if(eM>WE){const as=Math.max(sM,WE);ap.push(toTime(as)+'–'+toTime(eM));afterH+=diffH(as,eM)}
+        if(ap.length)afterP=ap.join(', ');
+        return{...r,workP,workH,afterP,afterH};
+    });
+
+    const totalWork=rows.reduce((s,r)=>s+r.workH,0).toFixed(1);
+    const totalAfter=rows.reduce((s,r)=>s+r.afterH,0).toFixed(1);
+    const uniqueU=new Set(rows.map(r=>r.name)).size;
+    const workDays=rows.filter(r=>r.flag==='normal'||r.flag==='absent').length;
+    const norm=(workDays*9).toFixed(0);
+    const absentDays=rows.filter(r=>r.flag==='absent').length;
+    const weekendDays=rows.filter(r=>r.flag==='weekend_work'||r.flag==='holiday_work').length;
+
+    document.getElementById('stats').innerHTML=`
+        <div class="stat"><div class="num">${uniqueU}</div><div class="lbl">Сотрудников</div></div>
+        <div class="stat"><div class="num">${rows.length}</div><div class="lbl">Записей</div></div>
+        <div class="stat"><div class="num">${norm} ч</div><div class="lbl">Норма (${workDays}×9ч)</div></div>
+        <div class="stat"><div class="num" style="color:var(--accent-green)">${totalWork} ч</div><div class="lbl">В раб. время</div></div>
+        <div class="stat"><div class="num" style="color:var(--accent-red)">${totalAfter} ч</div><div class="lbl">Вне раб. времени</div></div>
+        <div class="stat"><div class="num" style="color:var(--accent-orange)">${absentDays}</div><div class="lbl">Пропущено</div></div>
+        <div class="stat"><div class="num" style="color:var(--accent-green)">${weekendDays}</div><div class="lbl">В выходные</div></div>
+    `;
+
+    const flagTag={'normal':'','absent':'<span class="tag tag-absent">Нет подключения</span>','weekend_work':'<span class="tag tag-weekend">Выходной (работал)</span>','holiday_work':'<span class="tag tag-holiday">Праздник (работал)</span>','weekend_off':'<span class="tag" style="background:var(--bg-secondary);color:var(--text-muted)">Выходной</span>','holiday_off':'<span class="tag" style="background:var(--bg-secondary);color:var(--text-muted)">Праздник</span>'};
+
+    document.getElementById('tbody').innerHTML=rows.map(r=>{
+        const isOff=r.flag==='weekend_off'||r.flag==='holiday_off';
+        const cls=r.flag==='absent'?'row-absent':(r.flag==='weekend_work'||r.flag==='holiday_work')?'row-weekend':'';
+        return`<tr class="${cls}">
+            <td>${r.name}</td><td>${r.date.split('-').reverse().join('.')}</td>
+            <td class="cell-normal">${isOff?'':r.workP}</td>
+            <td class="cell-normal">${isOff?'':(r.workH?r.workH+' ч':'—')}</td>
+            <td>${isOff?'':(r.afterH?'<span class="cell-after">'+r.afterP+'</span>':'—')}</td>
+            <td>${isOff?'':(r.afterH?'<span class="cell-after">'+r.afterH+' ч</span>':'—')}</td>
+            <td>${flagTag[r.flag]||''}</td>
+        </tr>`;
+    }).join('');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,457 @@
+server:
+  port: 8080
+  poll_interval: 5m
+
+jira:
+  url: "https://jira.fortebank.com"
+  token: "${JIRA_TOKEN}"
+
+confluence:
+  url: "https://confluence.fortebank.com"
+  token: "${CONFLUENCE_TOKEN}"
+
+gitlab:
+  url: "https://gitlab.fortebank.com"
+  token: "${GITLAB_TOKEN}"
+
+alerts:
+  stale_task_days: 5
+  no_assignee_hours: 24
+  mr_no_review_hours: 48
+  no_activity_days: 3
+
+employees:
+  # ═══════════════════════════════════════════════════════
+  # Группа автотестирования (mobile)
+  # ═══════════════════════════════════════════════════════
+  - name: "Кинеспаев Райнур Манарбекович"
+    email: "rkinespaev@fortebank.com"
+    gitlab_username: "RKinespaev"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank/tests/domains/partner"]
+    gitlab_repos:
+      - "qa-bank/tests/domains/partner/adapterkem"
+      - "qa-bank/tests/domains/partner/yandexadapter"
+    role: "Автотестирование (mobile)"
+    art: "ART Digital Daily Banking"
+    team: "Partners"
+    show_in_mr: true
+
+  # ═══════════════════════════════════════════════════════
+  # Группа функционального тестирования (manual)
+  # ═══════════════════════════════════════════════════════
+  - name: "Абдрахманова Карлыгаш Ериковна"
+    email: "keabdrakhmanova@fortebank.com"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank"]
+    role: "Функциональное тестирование"
+    art: "ART Digital Lending"
+    team: "Engagement"
+    show_in_mr: false
+
+  - name: "Каршиганов Курмангали Исенович"
+    email: "kkarshiganov@fortebank.com"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank"]
+    role: "Функциональное тестирование"
+    art: "ART Digital Daily Banking"
+    team: "Deposits"
+    show_in_mr: false
+
+  - name: "Бибол Дәурен Дәулетұлы"
+    email: "dbibol@fortebank.com"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank"]
+    role: "Функциональное тестирование"
+    art: "ART Digital Daily Banking"
+    team: "Debit cards + Loyalty"
+    show_in_mr: false
+
+  - name: "Кан Сергей"
+    email: "skan@fortebank.com"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank"]
+    role: "Функциональное тестирование"
+    art: "ART SME Lending"
+    team: "Онлайн кредиты"
+    show_in_mr: false
+
+  - name: "Дымочко Екатерина Сергеевна"
+    email: "ykhitrina@fortebank.com"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank"]
+    role: "Функциональное тестирование"
+    art: "ART Digital Lending"
+    team: "General+GovTech"
+    show_in_mr: false
+
+  - name: "Нурахметов Нуржан Айдынович"
+    email: "nnurakhmetov@fortebank.com"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank"]
+    role: "Функциональное тестирование"
+    art: "ART SME Lending"
+    team: "Origination"
+    show_in_mr: false
+
+  - name: "Абаев Рамазан Бауыржанович"
+    email: "rabayev@fortebank.com"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank"]
+    role: "Функциональное тестирование"
+    art: "ART Digital Daily Banking"
+    team: "Credit cards"
+    show_in_mr: false
+
+  - name: "Фазылова Жансая Серікжанқызы"
+    email: "zfazylova@fortebank.com"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank"]
+    role: "Функциональное тестирование"
+    art: "ART Digital Daily Banking"
+    team: "Premier"
+    show_in_mr: false
+
+  - name: "Курбаковский Юрий Евгеньевич"
+    email: "ykurbakovskiy@fortebank.com"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank"]
+    role: "Функциональное тестирование"
+    art: "ART Digital Daily Banking"
+    team: "Transfers & FX services"
+    show_in_mr: false
+
+  - name: "Сулейменова Мира Сериковна"
+    email: "msuleimenova@fortebank.com"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank"]
+    role: "Функциональное тестирование"
+    art: ""
+    team: ""
+    show_in_mr: false
+
+  - name: "Семиклет Александр Геннадьевич"
+    email: "asemiklet@fortebank.com"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank"]
+    role: "Функциональное тестирование"
+    art: "ART Business Banking Transact"
+    team: "Core team platform МИБ"
+    show_in_mr: false
+
+  - name: "Қайырбеков Қайырхан Амангелдіұлы"
+    email: "kkaiyrbekov@fortebank.com"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank"]
+    role: "Функциональное тестирование"
+    art: "ART Business Banking Transact"
+    team: "Core team platform ИБ"
+    show_in_mr: false
+
+  - name: "Сариева Фариза Фатиховна"
+    email: "fsariyeva@fortebank.com"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank"]
+    role: "Функциональное тестирование"
+    art: "ART Business Banking Transact"
+    team: "Команда Дэйли"
+    show_in_mr: false
+
+  - name: "Касымова Аружан Сакеновна"
+    email: "arukassymova@fortebank.com"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank"]
+    role: "Функциональное тестирование"
+    art: "ART Business Banking Transact"
+    team: "Тарифные пакеты"
+    show_in_mr: false
+
+  - name: "Сағандықов Рамин Әміржанұлы"
+    email: "rsagandykov@fortebank.com"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank"]
+    role: "Функциональное тестирование"
+    art: "ART Digital Daily Banking"
+    team: "Release Team"
+    show_in_mr: false
+
+  # ═══════════════════════════════════════════════════════
+  # Группа автотестирования (backend)
+  # ═══════════════════════════════════════════════════════
+  - name: "Кирилюк Руслан Дмитриевич"
+    email: "rkirilyuk@fortebank.com"
+    gitlab_username: "RKirilyuk"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["domains/payment", "domains/history", "domains/connectors"]
+    gitlab_repos:
+      - "domains/payment"
+      - "domains/history"
+      - "domains/connectors"
+    role: "Автотестирование (backend)"
+    art: "ART Digital Daily Banking"
+    team: "Payments&History"
+    show_in_mr: true
+
+  - name: "Самохин Евгений Викторович"
+    email: "ysamokhin@fortebank.com"
+    gitlab_username: "YSamokhin"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank/tests/api-gateway", "qa-bank/libs"]
+    gitlab_repos:
+      - "qa-bank/tests/api-gateway/apigw"
+      - "qa-bank/tests/api-gateway/apigw-locust"
+      - "qa-bank/libs/forteapigw-2"
+      - "qa-bank/services/forteapigw-2-api"
+    role: "Автотестирование (backend)"
+    art: "ART Digital Daily Banking"
+    team: "API GW"
+    show_in_mr: true
+
+  - name: "Бирюков Владислав Викторович"
+    email: "vbiriukov@fortebank.com"
+    gitlab_username: "VBiriukov"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank/tests/domains/client", "qa-bank/tests/domains/communication"]
+    gitlab_repos:
+      - "qa-bank/tests/domains/client"
+      - "qa-bank/tests/domains/communication"
+    role: "Автотестирование (backend)"
+    art: "ART Digital Lending"
+    team: "General+GovTech"
+    show_in_mr: true
+
+  - name: "Жданов Леонид Валерьевич"
+    email: "lvzhdanov@fortebank.com"
+    gitlab_username: "LVZhdanov"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank/tests/domains/product"]
+    gitlab_repos:
+      - "qa-bank/tests/domains/product/depositservice"
+      - "qa-bank/tests/domains/product/depositactions"
+      - "qa-bank/tests/domains/product/depositinfo"
+    role: "Автотестирование (backend)"
+    art: "ART Digital Daily Banking"
+    team: "Deposits"
+    show_in_mr: true
+
+  - name: "Бескровнов Юрий Юрьевич"
+    email: "ibeskrovnov@fortebank.com"
+    gitlab_username: "IBeskrovnov"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["ibank/business/backend/autotests"]
+    gitlab_repos:
+      - "ibank/business/backend/autotests/autotests"
+    role: "Автотестирование (backend)"
+    art: "ART Business Banking Transact"
+    team: "Core team platform МИБ"
+    show_in_mr: true
+
+  - name: "Сағатов Данияр Талғатұлы"
+    email: "dsagatov@fortebank.com"
+    gitlab_username: "DSagatov"
+    jira_projects: ["SAPP", "QAT"]
+    gitlab_groups: ["qa-bank"]
+    gitlab_repos:
+      - "qa-bank/tests/domains/colvir"
+      - "qa-bank/tests/domains/compass"
+      - "qa-bank/services/qa-portal"
+      - "qa-bank/services/forport"
+    role: "Автотестирование (backend)"
+    art: "ART Platform"
+    team: "Colvir"
+    show_in_mr: true
+
+  - name: "Тугунов Дмитрий"
+    email: "dtugunov@fortebank.com"
+    gitlab_username: "DTugunov"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank/tests/domains/product"]
+    gitlab_repos:
+      - "qa-bank/tests/domains/product/creditcardaction"
+      - "qa-bank/tests/domains/product/clientproduct"
+      - "qa-bank/tests/domains/product/credit-card-service"
+    role: "Автотестирование (backend)"
+    art: "ART Digital Daily Banking"
+    team: "Credit cards"
+    show_in_mr: true
+
+  - name: "Куатов Данияр"
+    email: "dkuatov@fortebank.com"
+    gitlab_username: "DKuatov"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank/tests/domains/history"]
+    gitlab_repos:
+      - "qa-bank/tests/domains/history"
+    role: "Автотестирование (backend)"
+    art: "ART Digital Daily Banking"
+    team: "Payments&History"
+    show_in_mr: true
+
+  - name: "Жадан Ирина Викторовна"
+    email: "izhadan@fortebank.com"
+    gitlab_username: "IZhadan"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["ibank/business/backend/autotests"]
+    gitlab_repos:
+      - "ibank/business/backend/autotests/autotests"
+    role: "Автотестирование (backend)"
+    art: "ART Business Banking Transact"
+    team: "Core team platform ИБ"
+    show_in_mr: true
+
+  - name: "Оразалиев Аблай Алтайұлы"
+    email: "aaorazaliyev@fortebank.com"
+    gitlab_username: "AAOrazaliyev"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank/tests/domains/compass", "qa-bank/tests/domains/colvir", "qa-bank/tests/domains/ompliance"]
+    gitlab_repos:
+      - "qa-bank/tests/domains/compass"
+      - "qa-bank/tests/domains/colvir"
+      - "qa-bank/tests/domains/ompliance"
+      - "qa-bank/tests/domains/colvir/mib4"
+      - "qa-bank/libs/forte-qa-core"
+    role: "Автотестирование (backend)"
+    art: "ART Digital Daily Banking"
+    team: "Colvir/Compass/Compliance"
+    show_in_mr: true
+
+  # ═══════════════════════════════════════════════════════
+  # Группа регрессионного тестирования
+  # ═══════════════════════════════════════════════════════
+  - name: "Әмірханов Қуат Алтайұлы"
+    email: "kamirkhanov@fortebank.com"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank"]
+    role: "Регрессионное тестирование"
+    art: "ART Digital Lending"
+    team: "Core team"
+    show_in_mr: false
+
+  - name: "Нугуманов Тимур Тимурланович"
+    email: "tnugumanov@fortebank.com"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank"]
+    role: "Регрессионное тестирование"
+    art: "ART Digital Daily Banking"
+    team: "Release Team"
+    show_in_mr: false
+
+  - name: "Муканов Аблайхан Омербекович"
+    email: "amukanov@fortebank.com"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank"]
+    role: "Регрессионное тестирование"
+    art: ""
+    team: "Premier (MIB4)"
+    show_in_mr: false
+
+  - name: "Куанышбаев Бауржан Имангалиевич"
+    email: "bkuanyshbayev@fortebank.com"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank"]
+    role: "Регрессионное тестирование"
+    art: "ART Business Banking Transact"
+    team: "ВЭД"
+    show_in_mr: false
+
+  - name: "Аубакирова Айгерим Саметказыевна"
+    email: "asaubakirova@fortebank.com"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank"]
+    role: "Регрессионное тестирование"
+    art: "ART Digital Lending"
+    team: "Integration+Partners"
+    show_in_mr: false
+
+  - name: "Истибаев Аман Ерсаинович"
+    email: "aistibayev@fortebank.com"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank"]
+    role: "Регрессионное тестирование"
+    art: "ART Digital Lending"
+    team: "Экспресс-кредит Origination"
+    show_in_mr: false
+
+  - name: "Байбуланов Азамат Абилкасымович"
+    email: "abaibulanov@fortebank.com"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank"]
+    role: "Регрессионное тестирование"
+    art: "ART Digital Lending"
+    team: "Авто Origination"
+    show_in_mr: false
+
+  - name: "Сәтімбаев Зәкіржан Алпамысұлы"
+    email: "zsatimbayev@fortebank.com"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank"]
+    role: "Регрессионное тестирование"
+    art: "ART Business Banking Transact"
+    team: "Корп карты + Гарантия"
+    show_in_mr: false
+
+  - name: "Рахимова Ассоль Дамировна"
+    email: "adrakhimova@fortebank.com"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank"]
+    role: "Регрессионное тестирование"
+    art: "ART Digital Lending"
+    team: "Кредитование в партнерстве Origination"
+    show_in_mr: false
+
+  - name: "Мусалимов Шадияр Алимжанович"
+    email: "samussalimov@fortebank.com"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank"]
+    role: "Регрессионное тестирование"
+    art: "ART Platform"
+    team: "ForteMain"
+    show_in_mr: false
+
+  - name: "Сабыров Теңелбек Қанатұлы"
+    email: "tqsabyrov@fortebank.com"
+    gitlab_username: "TQSabyrov"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["domains/history"]
+    gitlab_repos:
+      - "domains/history"
+    role: "Регрессионное тестирование"
+    art: "ART Digital Daily Banking"
+    team: "Payments&History"
+    show_in_mr: true
+
+  - name: "Утемуратов Иршод Муратулы"
+    email: "imutemuratov@fortebank.com"
+    jira_projects: ["SAPP"]
+    gitlab_groups: ["qa-bank"]
+    role: "Регрессионное тестирование"
+    art: "ART SME Lending"
+    team: "Онлайн кредиты"
+    show_in_mr: false
+
+# Трекинг проект для задач тестирования
+analysis_project: "SAPP"
+
+# Статусная модель
+workflows:
+  analysis:
+    in_progress: ["In Progress", "В работе"]
+    done: ["Done", "Выполнено"]
+
+  user_story:
+    in_progress: ["In Progress"]
+    done: ["Done"]
+
+  user_story_domains:
+    in_progress: ["In Progress"]
+    review: ["In Review"]
+    done: ["Done"]
+
+  ved_trf:
+    in_progress: ["In Progress"]
+    done: ["Done"]
+
+  support:
+    types: ["Bug", "Ошибка", "Инцидент"]
+    in_progress: ["In Progress"]
+    done: ["Done"]
